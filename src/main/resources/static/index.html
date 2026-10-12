@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laxmi Clinic</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <meta name="description" content="Official portal for Laxmi Clinic. Generate online OPD queue tokens, book doctor home visits, ">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation Bar -->
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <div class="logo-icon" style="padding:0; overflow:hidden; background:transparent; border:none; box-shadow:none;"><img src="/favicon.png" alt="Laxmi Clinic" style="width:100%; height:100%; object-fit:contain; border-radius:10px;"></div>
+                <div class="logo-text">
+                    <span class="logo-title clinic-name-text">Laxmi Clinic</span>
+                    <span class="logo-tag">General OPD & ESIS Panel</span>
+                </div>
+            </a>
+
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#token-section" class="nav-link">Online Token</a></li>
+                <li><a href="#homevisit-section" class="nav-link">Home Visit</a></li>
+                <li><a href="#about-section" class="nav-link">About Doctor</a></li>
+                <li><a href="#contact-section" class="nav-link">Contact</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <a href="#token-section" class="btn btn-primary btn-sm">Get Token</a>
+                <button id="adminLoginTrigger" class="btn btn-outline btn-sm">Staff Login</button>
+                <button class="mobile-toggle" id="mobileMenuToggle" aria-label="Toggle Menu">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Floating My Token Banner (When user has active token) -->
+    <div id="myTokenFloatingBanner" style="display:none;">
+    </div>
+
+    <!-- Hero Section with Live OPD Queue Monitor -->
+    <section class="hero" id="home">
+        <!-- Floating Ambient Background Orbs -->
+        <div class="hero-orb hero-orb-1"></div>
+        <div class="hero-orb hero-orb-2"></div>
+
+        <div class="container">
+            <div class="hero-grid">
+                <!-- Hero Content -->
+                <div class="hero-content reveal-left">
+                    <div class="hero-badge" id="heroBadgeContainer">
+                        <span class="pulse-dot" id="heroPulseDot"></span>
+                        <span id="heroClinicStatus">Clinic Open & Accepting Patients</span>
+                    </div>
+
+                    <h1 class="hero-title">
+                        Welcome to <br><span>Laxmi Clinic</span>
+                    </h1>
+
+                    <p class="hero-text clinic-tagline-text">
+                        Caring for your health with compassion & clinical excellence. Generate your OPD token online from home, track live queue positions, or book doctor home visits.
+                    </p>
+
+                    <div class="hero-ctas">
+                        <a href="#token-section" class="btn btn-primary btn-lg">🎟️ Get Online Token</a>
+                        <a href="#homevisit-section" class="btn btn-outline btn-lg">🏠 Book Home Visit</a>
+                    </div>
+
+                    <div class="hero-stats-row stagger-container">
+                        <div class="hero-stat-card stagger-item">
+                            <h4 class="doctor-experience-text counter-val" data-target="30" data-suffix="+ Years">30+ Years</h4>
+                            <p>Clinical Experience</p>
+                        </div>
+                        <div class="hero-stat-card stagger-item">
+                            <h4 class="counter-val" data-target="2" data-suffix=" Shifts">2 Shifts</h4>
+                            <p>Daily Availability</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Live Token Queue Tracker Card (With 3D Tilt & ECG) -->
+                <div class="live-token-card reveal-right" id="heroLiveTokenCard">
+                    <div class="token-live-header">
+                        <div>
+                            <h3 style="margin:0; font-size:1.25rem;">OPD Live Queue</h3>
+                            <small style="color:#64748b;" id="heroCurrentShift">Morning Shift</small>
+                        </div>
+                        <div class="live-badge" id="heroQueueLiveBadge">
+                            <div class="soundwave-anim" id="heroQueueSoundwave">
+                                <span class="soundwave-bar"></span>
+                                <span class="soundwave-bar"></span>
+                                <span class="soundwave-bar"></span>
+                            </div>
+                            <span id="heroQueueLiveText">LIVE</span>
+                        </div>
+                    </div>
+
+                    <div class="current-token-display">
+                        <div class="current-token-label">Currently Serving Token</div>
+                        <div class="current-token-number" id="heroCurrentToken">--</div>
+                        <div class="current-token-sub">Please proceed to Doctor's Consultation Room</div>
+                        
+                        <!-- ECG Heartbeat SVG Wave -->
+                        <svg class="ecg-monitor-svg" viewBox="0 0 500 40" preserveAspectRatio="none">
+                            <path class="ecg-line" d="M0,20 L120,20 L135,6 L145,34 L155,10 L165,26 L175,20 L300,20 L315,6 L325,34 L335,10 L345,26 L355,20 L500,20" />
+                        </svg>
+                    </div>
+
+                    <div class="token-quick-stats">
+                        <div class="token-mini-stat">
+                            <div class="num counter-val" id="heroWaitingCount">0</div>
+                            <div class="lbl">Patients Waiting</div>
+                        </div>
+                        <div class="token-mini-stat">
+                            <div class="num counter-val" id="heroTotalCount">0</div>
+                            <div class="lbl">Total Tokens Today</div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; flex-direction:column; gap:0.65rem;">
+                        <a href="#token-section" class="btn btn-primary btn-sm" style="width:100%;">🎟️ Generate My Token Now</a>
+                        <a href="#token-search-box" class="btn btn-outline btn-sm" style="width:100%;">🔍 Track Existing Token</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Clinic Operational Timings & 5 Shifts Schedule -->
+    <section class="section section-alt" id="shifts-section">
+        <div class="container">
+            <div class="section-header reveal-init">
+                <span class="section-badge">Clinic Timings</span>
+                <h2 class="section-title">2 Daily Shift Schedule</h2>
+                <p class="section-subtitle">Doctor consultations are held in 2 daily shifts: Morning (12:00 PM - 05:00 PM) & Evening (07:00 PM - 12:00 AM).</p>
+            </div>
+
+            <div class="shift-timeline-grid stagger-container" id="shiftsTimelineContainer">
+                <!-- Dynamically loaded 5 shifts with stagger animation -->
+            </div>
+        </div>
+    </section>
+
+    <!-- HIGHEST PRIORITY FEATURE: Online Number / Token System -->
+    <section class="section" id="token-section">
+        <div class="container">
+            <div class="section-header reveal-init">
+                <span class="section-badge">Online Number System</span>
+                <h2 class="section-title">Generate OPD Consultation Token</h2>
+                <p class="section-subtitle">Skip the waiting room crowd. Generate your OPD token number online, arrive just in time for your turn, and track live queue status from your phone.</p>
+            </div>
+
+            <div class="grid-2">
+                <!-- Token Generation Form -->
+                <div class="card reveal-left" style="border-top: 4px solid var(--primary);">
+                    <h3 style="margin-bottom:1.5rem; display:flex; align-items:center; gap:0.5rem;">
+                        <span>📋</span> Patient Token Registration
+                    </h3>
+
+                    <form id="generateTokenForm">
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label" for="tokenPatientName">Patient Full Name <span class="req">*</span></label>
+                                <input type="text" id="tokenPatientName" class="form-control" placeholder="e.g. Rahul Sharma" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="tokenPatientPhone">Mobile Number <span class="req">*</span></label>
+                                <input type="tel" id="tokenPatientPhone" class="form-control" placeholder="e.g. 9876543210" pattern="^[0-9+\-\s()]{7,15}$" required>
+                            </div>
+                        </div>
+
+                        <div class="form-grid-3">
+                            <div class="form-group">
+                                <label class="form-label" for="tokenPatientAge">Age</label>
+                                <input type="number" id="tokenPatientAge" class="form-control" placeholder="e.g. 34" min="1" max="120">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="tokenPatientGender">Gender</label>
+                                <select id="tokenPatientGender" class="form-select">
+                                    <option value="">Select</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="tokenShiftSelect">Preferred Shift</label>
+                                <select id="tokenShiftSelect" class="form-select">
+                                    <option value="">Current Shift</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="tokenSymptoms">Symptoms / Reason for Visit (Optional)</label>
+                            <textarea id="tokenSymptoms" class="form-control" placeholder="e.g. Fever, cough for 2 days, general checkup..." rows="2"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg" style="width:100%;">
+                            🎟️ Generate My OPD Token
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Live Queue Lookup & Quick Track -->
+                <div class="card reveal-right" id="token-search-box" style="border-top: 4px solid var(--secondary);">
+                    <h3 style="margin-bottom:1.5rem; display:flex; align-items:center; gap:0.5rem;">
+                        <span>🔍</span> Check Your Token Status
+                    </h3>
+
+                    <p style="font-size:0.95rem; color:#64748b; margin-bottom:1.5rem;">
+                        Already generated a token today? Enter your token number or registered mobile number to check how many patients are ahead of you and your live consultation status.
+                    </p>
+
+                    <form id="tokenSearchForm" style="margin-bottom:2rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="tokenSearchInput">Enter Token Number or Mobile</label>
+                            <div style="display:flex; gap:0.75rem;">
+                                <input type="text" id="tokenSearchInput" class="form-control" placeholder="e.g. 5 or 9876543210" required>
+                                <button type="submit" class="btn btn-secondary">Check</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Queue Instructions / Guidelines -->
+                    <div style="background:#f8fafc; padding:1.25rem; border-radius:12px; border:1px solid #e2e8f0;">
+                        <h4 style="font-size:0.95rem; margin-bottom:0.75rem; color:#0f172a;">📌 OPD Token Guidelines</h4>
+                        <ul style="padding-left:1.25rem; font-size:0.85rem; color:#475569; line-height:1.7;">
+                            <li>Tokens are generated sequentially for today starting from #1.</li>
+                            <li>Please reach the clinic when approximately <strong>2-3 patients</strong> are ahead of your number.</li>
+                            <li>When your number is <strong>CALLED</strong>, kindly proceed directly to the doctor's room.</li>
+                            <li>If missed, reception can recall your token back to queue.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Home Visit Slot Booking Section -->
+    <section class="section section-alt" id="homevisit-section">
+        <div class="container">
+            <div class="section-header reveal-init">
+                <span class="section-badge">Doctor at Home</span>
+                <h2 class="section-title">Home Visit Slot Booking</h2>
+                <p class="section-subtitle">Comfortable, personalized doctor consultations and medical checkups in the comfort of your home. Ideal for elderly, bedridden, or pediatric patients.</p>
+            </div>
+
+            <div class="grid-2">
+                <!-- Booking Form -->
+                <div class="card reveal-left" style="border-top: 4px solid var(--accent);">
+                    <h3 style="margin-bottom:1.5rem;">🏠 Book Home Consultation</h3>
+
+                    <form id="homeVisitBookingForm">
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label" for="hvPatientName">Patient Name <span class="req">*</span></label>
+                                <input type="text" id="hvPatientName" class="form-control" placeholder="e.g. Ramesh Chandra" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="hvMobile">Mobile Number <span class="req">*</span></label>
+                                <input type="tel" id="hvMobile" class="form-control" placeholder="e.g. 9876543210" pattern="^[0-9+\-\s()]{7,15}$" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="hvEmail">Email Address (Optional)</label>
+                            <input type="email" id="hvEmail" class="form-control" placeholder="patient@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="hvAddress">Full Residential Address <span class="req">*</span></label>
+                            <textarea id="hvAddress" class="form-control" placeholder="Flat / House No., Building, Street Name..." rows="2" required></textarea>
+                        </div>
+
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label" for="hvLandmark">Nearby Landmark</label>
+                                <input type="text" id="hvLandmark" class="form-control" placeholder="Near Bank / School">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="hvPincode">Pincode <span class="req">*</span></label>
+                                <input type="text" id="hvPincode" class="form-control" placeholder="e.g. 110001" required>
+                            </div>
+                        </div>
+
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label" for="hvPreferredDate">Preferred Date <span class="req">*</span></label>
+                                <input type="date" id="hvPreferredDate" class="form-control" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="hvTimeSlot">Preferred Time Slot <span class="req">*</span></label>
+                                <select id="hvTimeSlot" class="form-select" required>
+                                    <option value="">Select Time Slot</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="hvReason">Medical Reason / Symptoms</label>
+                            <input type="text" id="hvReason" class="form-control" placeholder="e.g. Bedridden elderly patient, routine BP/Sugar check...">
+                        </div>
+
+                        <button type="submit" class="btn btn-accent btn-lg" style="width:100%;">
+                            🏠 Request Home Visit Slot
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Track Existing Home Visit Requests -->
+                <div class="card reveal-right">
+                    <h3 style="margin-bottom:1.25rem;">📍 Track Home Visit Status</h3>
+                    <p style="font-size:0.9rem; color:#64748b; margin-bottom:1.25rem;">
+                        Enter your mobile number to check the status of your submitted home visit requests (Pending / Accepted / Completed).
+                    </p>
+
+                    <form id="hvTrackForm" style="margin-bottom:1.5rem;">
+                        <div style="display:flex; gap:0.75rem;">
+                            <input type="tel" id="hvTrackMobile" class="form-control" placeholder="Enter mobile number" required>
+                            <button type="submit" class="btn btn-primary">Track</button>
+                        </div>
+                    </form>
+
+                    <div id="hvTrackResults">
+                        <div style="background:#f8fafc; padding:1.5rem; border-radius:12px; text-align:center; border:1px solid #e2e8f0;">
+                            <span style="font-size:2rem;">📋</span>
+                            <p style="margin:0.5rem 0 0 0; color:#64748b; font-size:0.9rem;">Your booked requests will appear here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Clinic & Doctor Section -->
+    <section class="section" id="about-section">
+        <div class="container">
+            <div class="grid-2" style="align-items:center;">
+                <div class="reveal-left">
+                    <span class="section-badge">About Us</span>
+                    <h2 class="section-title"><span class="clinic-name-text">Laxmi Clinic</span> & Doctor Profile</h2>
+                    <p class="clinic-about-desc" style="font-size:1.05rem; color:#475569; margin-bottom:1.5rem;">
+                        Laxmi Clinic is dedicated to providing high quality, patient-centered healthcare. Our modern facility offers outpatient consultations, preventive health checkups, on-site diagnostics, and home visit care.
+                    </p>
+
+                    <div style="background:#ffffff; border-radius:12px; padding:1.5rem; border:1px solid #e2e8f0; margin-bottom:1.5rem; box-shadow:var(--shadow-sm);">
+                        <h4 class="doctor-name-text" style="color:var(--primary-dark); font-size:1.35rem; margin-bottom:0.25rem;">Dr. Rajesh Sonar</h4>
+                        <div class="doctor-qualification-text" style="font-weight:600; color:#0284c7; font-size:0.95rem;">B.A.M.S. (BOM) &bull; ESIS Panel Doctor</div>
+                        <div class="doctor-specialty-text" style="font-size:0.9rem; color:#64748b; margin-bottom:0.75rem;">General Physician & ESIS Panel Doctor (Reg: 31-8933 Sakinaka)</div>
+                        <p class="doctor-bio-text" style="font-size:0.9rem; color:#475569; margin:0;">
+                            Dr. Rajesh Sonar is a qualified medical practitioner holding B.A.M.S. (BOM) and an approved ESIS Panel Doctor (Reg: 31-8933, Sakinaka), providing clinical OPD consultations and dedicated patient healthcare.
+                        </p>
+                    </div>
+
+                    <div id="aboutHighlightsList">
+                        <!-- Dynamically loaded highlights -->
+                    </div>
+                </div>
+
+                <div class="reveal-right">
+                    <div class="card" style="background:linear-gradient(135deg, #0d9488 0%, #0891b2 100%); color:#ffffff; border:none; padding:3rem 2.5rem;">
+                        <h3 style="color:#ffffff; margin-bottom:1.25rem;">Why Patients Choose Us</h3>
+                        
+                        <div style="display:flex; flex-direction:column; gap:1.5rem;">
+                            <div style="display:flex; gap:1rem;">
+                                <div style="font-size:1.75rem;">⏱️</div>
+                                <div>
+                                    <h4 style="color:#ffffff; font-size:1.1rem; margin-bottom:0.25rem;">Zero Waiting Queues</h4>
+                                    <p style="color:#ccfbf1; font-size:0.9rem; margin:0;">Online token system lets you arrive just before your turn.</p>
+                                </div>
+                            </div>
+
+                            <div style="display:flex; gap:1rem;">
+                                <div style="font-size:1.75rem;">🏠</div>
+                                <div>
+                                    <h4 style="color:#ffffff; font-size:1.1rem; margin-bottom:0.25rem;">Home Consultation Care</h4>
+                                    <p style="color:#ccfbf1; font-size:0.9rem; margin:0;">Doctor visits and consultations at your doorstep.</p>
+                                </div>
+                            </div>
+
+                            <div style="display:flex; gap:1rem;">
+                                <div style="font-size:1.75rem;">🔬</div>
+                                <div>
+                                    <h4 style="color:#ffffff; font-size:1.1rem; margin-bottom:0.25rem;">ESIS Panel Approved Care</h4>
+                                    <p style="color:#ccfbf1; font-size:0.9rem; margin:0;">Certified ESIS Panel Doctor (31-8933 Sakinaka) providing comprehensive clinical consultations.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:2.5rem;">
+                            <a href="#token-section" class="btn btn-accent btn-lg" style="width:100%;">Get OPD Token Online</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Location Section -->
+    <section class="section section-alt" id="contact-section">
+        <div class="container">
+            <div class="section-header reveal-init">
+                <span class="section-badge">Get in Touch</span>
+                <h2 class="section-title">Contact & Clinic Information</h2>
+                <p class="section-subtitle">Have questions or need assistance? Reach out to our front desk team or visit our clinic.</p>
+            </div>
+
+            <div style="max-width: 680px; margin: 0 auto;">
+                <!-- Contact Info Card -->
+                <div class="card reveal-init" style="padding: 2.25rem 2rem;">
+                    <h3 style="margin-bottom: 2rem; text-align: center;">Clinic Information</h3>
+
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem; font-size: 0.95rem;">
+                        <div style="display: flex; gap: 1.25rem; align-items: flex-start;">
+                            <span style="font-size: 1.5rem; line-height: 1;">📍</span>
+                            <div>
+                                <strong style="font-size: 1rem;">Address:</strong>
+                                <p class="clinic-address-text" style="margin: 0.25rem 0 0 0; color: #475569;">Shop No. 6, PNB, Sakinaka, Br. Kangira Bai, Parshuram Pal Niwas, Krishna Nagar, 90 Feet Road, Sakinaka, Mumbai - 400 072</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 1.25rem; align-items: flex-start;">
+                            <span style="font-size: 1.5rem; line-height: 1;">&#x1F4DE;</span>
+                            <div>
+                                <strong style="font-size: 1rem;">Phone / Helpline:</strong>
+                                <p class="clinic-phone-text" style="margin: 0.25rem 0 0 0; color: #475569;">9819531470</p>
+                            </div>
+                        </div>
+
+                        
+
+                        <div style="display: flex; gap: 1.25rem; align-items: flex-start;">
+                            <span style="font-size: 1.5rem; line-height: 1;">🕒</span>
+                            <div>
+                                <strong style="font-size: 1rem;">Consultation Timings:</strong>
+                                <p class="clinic-timings-text" style="margin: 0.25rem 0 0 0; color: #475569;">12:00 PM - 05:00 PM & 07:00 PM - 12:00 AM (Mon - Sat)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="logo" style="margin-bottom:1rem;">
+                        <div class="logo-icon" style="padding:0; overflow:hidden; background:transparent; border:none; box-shadow:none;"><img src="/favicon.png" alt="Laxmi Clinic" style="width:100%; height:100%; object-fit:contain; border-radius:10px;"></div>
+                        <span class="logo-title clinic-name-text" style="color:#ffffff;">Laxmi Clinic</span>
+                    </div>
+                    <p class="clinic-tagline-text" style="color:#94a3b8; font-size:0.9rem;">
+                        Comprehensive outpatient medical care, online token queue system, and home visit diagnostic services.
+                    </p>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#token-section">Online OPD Token</a></li>
+                        <li><a href="#homevisit-section">Home Visit Booking</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Clinic Shifts</h4>
+                    <ul class="footer-links">
+                        <li><a href="#shifts-section">Morning Shift (12:00 PM - 05:00 PM)</a></li>
+                        <li><a href="#shifts-section">Evening Shift (07:00 PM - 12:00 AM)</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Admin Portal</h4>
+                    <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:1rem;">
+                        Doctor & Clinic Staff administration access for live queue management, home visit approvals, and configuration.
+                    </p>
+                    <a href="/admin.html" class="btn btn-outline btn-sm" style="color:#ffffff; border-color:#94a3b8;">Doctor Dashboard</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div>
+                    &copy; 2026 <span class="clinic-name-text">Laxmi Clinic</span>. All Rights Reserved. Production Healthcare System.
+                </div>
+                <div>
+                    Doctor Helpline: <strong class="clinic-phone-text" style="color:#ffffff;">9819531470</strong>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Token Slip Modal Dialogue -->
+    <div class="modal-overlay" id="tokenSlipModal">
+        <div class="modal-content" style="max-width:520px;">
+            <button class="modal-close" onclick="TokenManager.closeSlipModal()">&times;</button>
+            <div id="tokenSlipContent"></div>
+        </div>
+    </div>
+
+    <!-- Home Visit Confirmation Modal -->
+    <div class="modal-overlay" id="hvConfirmationModal">
+        <div class="modal-content" style="max-width:520px;">
+            <button class="modal-close" onclick="HomeVisitManager.closeConfirmationModal()">&times;</button>
+            <div id="hvConfirmationContent"></div>
+        </div>
+    </div>
+
+    <!-- Admin / Staff Login Modal Dialogue -->
+    <div class="modal-overlay" id="adminLoginModal">
+        <div class="modal-content" style="max-width:440px;">
+            <button class="modal-close" onclick="App.closeLoginModal()">&times;</button>
+            <div style="text-align:center; margin-bottom:1.5rem;">
+                <div class="logo-icon" style="margin:0 auto 0.75rem; width:50px; height:50px; font-size:1.75rem;">🔐</div>
+                <h3 style="margin-bottom:0.25rem;">Doctor & Staff Login</h3>
+                <p style="font-size:0.85rem; color:#64748b; margin:0;">Laxmi Clinic Management System</p>
+            </div>
+
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label class="form-label" for="adminUsername">Username</label>
+                    <input type="text" id="adminUsername" class="form-control" placeholder="" required autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="adminPassword">Password</label>
+                    <input type="password" id="adminPassword" class="form-control" placeholder="" required autocomplete="current-password">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg" style="width:100%;">
+                    Sign In to Dashboard
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/token.js"></script>
+    <script src="/js/homevisit.js"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>

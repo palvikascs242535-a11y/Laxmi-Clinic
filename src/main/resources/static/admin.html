@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laxmi Clinic</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/admin.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-icon" style="padding:0; overflow:hidden; background:transparent; border:none; box-shadow:none;"><img src="/favicon.png" alt="Laxmi Clinic" style="width:100%; height:100%; object-fit:contain; border-radius:8px;"></div>
+                <div class="sidebar-brand-text">
+                    <h3>Laxmi Clinic</h3>
+                    <span>Doctor & Admin Portal</span>
+                </div>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="sidebar-section-title">Operations</li>
+                <li class="sidebar-item">
+                    <a href="#overview" class="sidebar-link active" data-tab="overview">
+                        <i>📊</i> Dashboard Overview
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#queue" class="sidebar-link" data-tab="queue">
+                        <i>🎟️</i> Live Queue Console
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#homevisits" class="sidebar-link" data-tab="homevisits">
+                        <i>🏠</i> Home Visit Requests
+                    </a>
+                </li>
+
+                <li class="sidebar-section-title">Clinical Configuration</li>
+                <li class="sidebar-item">
+                    <a href="#shifts" class="sidebar-link" data-tab="shifts">
+                        <i>⏰</i> 2 Shift Timings
+                    </a>
+                </li>
+                
+                
+
+                <li class="sidebar-section-title">Management</li>
+                <li class="sidebar-item">
+                    <a href="#siteinfo" class="sidebar-link" data-tab="siteinfo">
+                        <i>🏥</i> Site Info & Timings
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#inquiries" class="sidebar-link" data-tab="inquiries">
+                        <i>✉️</i> Patient Inquiries
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#notifications" class="sidebar-link" data-tab="notifications">
+                        <i>🔔</i> Notifications Center
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#settings" class="sidebar-link" data-tab="settings">
+                        <i>⚙️</i> Account Settings
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-user">
+                <div class="user-info">
+                    <div class="user-avatar">👨‍⚕️</div>
+                    <div class="user-details">
+                        <h5 class="admin-user-name">Administrator</h5>
+                        <span>Clinic Doctor</span>
+                    </div>
+                </div>
+                <button class="btn-logout" id="adminLogoutBtn" title="Sign Out">🚪</button>
+            </div>
+        </aside>
+
+        <!-- Mobile Sidebar Backdrop Overlay -->
+        <div class="admin-sidebar-backdrop" id="adminSidebarBackdrop"></div>
+
+        <!-- Main Content Area -->
+        <main class="admin-main">
+            <!-- Topbar -->
+            <header class="admin-topbar">
+                <div class="topbar-title" style="display:flex; align-items:center; gap:0.75rem;">
+                    <button class="mobile-sidebar-toggle" id="adminSidebarToggle" aria-label="Toggle Menu">☰</button>
+                    <h2 id="currentViewTitle">Dashboard Overview</h2>
+                </div>
+
+                <div class="topbar-actions">
+                    <a href="/index.html" target="_blank" class="btn btn-outline btn-sm">🌐 Public Portal</a>
+                    
+                    <button class="btn-icon" id="toggleNotifDrawerBtn" title="In-App Notifications">
+                        🔔
+                        <span class="notif-badge" id="adminNotifBadge" style="display:none;">0</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Admin Body Views -->
+            <div class="admin-body">
+
+                <!-- 1. DASHBOARD OVERVIEW VIEW -->
+                <div class="admin-view" id="view-overview">
+                    <div class="metrics-row">
+                        <div class="metric-card">
+                            <div class="metric-icon-box metric-icon-primary">🎟️</div>
+                            <div class="metric-info">
+                                <h3 id="statTotalTokens">0</h3>
+                                <p>Today's Total Tokens</p>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-icon-box metric-icon-accent">🩺</div>
+                            <div class="metric-info">
+                                <h3 id="statCurrentToken">--</h3>
+                                <p>Current Called Token</p>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-icon-box metric-icon-warning">⏳</div>
+                            <div class="metric-info">
+                                <h3 id="statWaitingPatients">0</h3>
+                                <p>Waiting in Queue</p>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-icon-box metric-icon-secondary">✓</div>
+                            <div class="metric-info">
+                                <h3 id="statCompletedPatients">0</h3>
+                                <p>Completed Patients</p>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-icon-box metric-icon-danger">🏠</div>
+                            <div class="metric-info">
+                                <h3 id="statPendingHomeVisits">0</h3>
+                                <p>Pending Home Visits</p>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-icon-box metric-icon-primary">🏥</div>
+                            <div class="metric-info">
+                                <span id="statOperationalStatus" class="badge badge-completed">Clinic Open</span>
+                                <p style="margin-top:0.4rem;">Operational Status</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Queue Operator in Overview -->
+                    <div class="queue-operator-card">
+                        <div class="queue-operator-grid">
+                            <div class="current-token-box">
+                                <span style="font-size:0.85rem; font-weight:700; color:#0f766e; text-transform:uppercase; letter-spacing:0.05em;">Currently Serving</span>
+                                <div class="token-big-num" id="operatorCurrentTokenNum">--</div>
+                                <div class="current-patient-label" id="operatorCurrentPatientName">No Active Patient</div>
+                                <small style="color:#64748b;" id="operatorCurrentShift">Shift: Morning</small>
+                            </div>
+
+                            <div class="operator-actions-panel">
+                                <div>
+                                    <h3 style="margin-bottom:0.4rem;">OPD Queue Quick Control</h3>
+                                    <p style="font-size:0.9rem; color:#64748b; margin:0;">
+                                        Advance queue to next patient in chronological order, or complete current consultation.
+                                    </p>
+                                </div>
+
+                                <div class="action-buttons-group">
+                                    <button class="btn btn-call-next" id="btnCallNextToken">
+                                        📢 Call Next Token
+                                    </button>
+                                    <a href="#queue" class="btn btn-outline btn-lg">Full Queue Console</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. LIVE QUEUE CONSOLE VIEW (HIGHEST PRIORITY) -->
+                <div class="admin-view" id="view-queue" style="display:none;">
+                    <div class="queue-operator-card">
+                        <div class="queue-operator-grid">
+                            <div class="current-token-box">
+                                <span style="font-size:0.85rem; font-weight:700; color:#0f766e; text-transform:uppercase;">Now Consulting</span>
+                                <div class="token-big-num" id="queueFullTokenNum">--</div>
+                                <div class="current-patient-label" id="queueFullPatientName">Waiting to call...</div>
+                            </div>
+
+                            <div class="operator-actions-panel">
+                                <div>
+                                    <h3 style="margin-bottom:0.4rem;">Queue Advancement Controls</h3>
+                                    <p style="font-size:0.9rem; color:#64748b; margin:0;">
+                                        Clicking "Call Next Token" automatically completes the current consultation and notifies the next waiting patient.
+                                    </p>
+                                </div>
+
+                                <div class="action-buttons-group">
+                                    <button class="btn btn-call-next" onclick="API.admin.callNextToken().then(() => AdminApp.init())">
+                                        📢 Call Next Waiting Token
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <div class="table-header-bar">
+                            <h3>Today's Token Queue</h3>
+                            <div style="display:flex; gap:1rem; align-items:center;">
+                                <select id="queueStatusFilter" class="form-select" style="width:160px; padding:0.4rem 0.8rem; font-size:0.85rem;">
+                                    <option value="">All Statuses</option>
+                                    <option value="WAITING">Waiting Only</option>
+                                    <option value="CALLED">Called Only</option>
+                                    <option value="COMPLETED">Completed</option>
+                                    <option value="SKIPPED">Skipped</option>
+                                </select>
+                                <button class="btn btn-outline btn-sm" onclick="AdminApp.init()">🔄 Refresh</button>
+                            </div>
+                        </div>
+
+                        <div style="overflow-x:auto;">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Token #</th>
+                                        <th>Patient Details</th>
+                                        <th>Mobile</th>
+                                        <th>Status</th>
+                                        <th>Shift</th>
+                                        <th>Symptoms / Notes</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tokensTableBody">
+                                    <!-- Dynamic Token Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. HOME VISITS MANAGEMENT VIEW -->
+                <div class="admin-view" id="view-homevisits" style="display:none;">
+                    <div class="table-container">
+                        <div class="table-header-bar">
+                            <h3>Home Visit Slot Requests</h3>
+                            <div style="display:flex; gap:1rem;">
+                                <select id="hvStatusFilter" class="form-select" style="width:160px;" onchange="AdminApp.init()">
+                                    <option value="">All Requests</option>
+                                    <option value="PENDING">Pending Only</option>
+                                    <option value="ACCEPTED">Accepted</option>
+                                    <option value="COMPLETED">Completed</option>
+                                    <option value="REJECTED">Rejected</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="overflow-x:auto;">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Date</th>
+                                        <th>Time Slot</th>
+                                        <th>Address & Landmark</th>
+                                        <th>Status</th>
+                                        <th>Reason</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="homeVisitsTableBody">
+                                    <!-- Dynamic Home Visit Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. 2 SHIFTS MANAGEMENT VIEW -->
+                <div class="admin-view" id="view-shifts" style="display:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                        <div>
+                            <h3 style="margin:0;">2 Configurable Clinic Shifts</h3>
+                            <p style="color:#64748b; font-size:0.9rem; margin:0;">Configure consultation timings and active availability for both clinic shifts.</p>
+                        </div>
+                        <button class="btn btn-outline btn-sm" onclick="API.admin.resetDefaultShifts().then(() => AdminApp.init())">Reset to Defaults</button>
+                    </div>
+
+                    <div id="adminShiftsContainer">
+                        <!-- Dynamically loaded 2 shift cards -->
+                    </div>
+                </div>
+
+                <!-- 5. SITE INFORMATION & OPERATIONAL SETTINGS VIEW -->
+                <div class="admin-view" id="view-siteinfo" style="display:none;">
+                    <div class="card" style="max-width:900px; margin:0 auto;">
+                        <h3 style="margin-bottom:1.5rem; border-bottom:1px solid #e2e8f0; padding-bottom:0.75rem;">
+                            Clinic Site Information & Operational Settings
+                        </h3>
+
+                        <form id="siteInfoForm">
+                            <!-- Operational Toggle Banner -->
+                            <div style="background:#f0fdfa; border:1px solid #ccfbf1; padding:1.25rem; border-radius:8px; margin-bottom:1.5rem;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                                    <div>
+                                        <h4 style="margin:0; color:#0f766e;">Clinic Operational Status</h4>
+                                        <p style="margin:0; font-size:0.85rem; color:#64748b;">Controls whether public can generate new tokens and see clinic as open.</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="settingOperational" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="form-group" style="margin:0;">
+                                    <label class="form-label" style="font-size:0.85rem;">Status Message</label>
+                                    <input type="text" id="settingOperationalMsg" class="form-control" placeholder="e.g. Clinic is open and accepting patients.">
+                                </div>
+                            </div>
+
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Clinic Name</label>
+                                    <input type="text" id="settingClinicName" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Clinic Tagline</label>
+                                    <input type="text" id="settingTagline" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Doctor Name</label>
+                                    <input type="text" id="settingDoctorName" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Doctor Qualifications</label>
+                                    <input type="text" id="settingDoctorQual" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Doctor Specialty</label>
+                                    <input type="text" id="settingDoctorSpecialty" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Clinical Experience</label>
+                                    <input type="text" id="settingDoctorExp" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Doctor Bio / Profile</label>
+                                <textarea id="settingDoctorBio" class="form-control" rows="2"></textarea>
+                            </div>
+
+                            <div class="form-grid-3">
+                                <div class="form-group">
+                                    <label class="form-label">Street Address</label>
+                                    <input type="text" id="settingStreet" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">City</label>
+                                    <input type="text" id="settingCity" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">State & Pincode</label>
+                                    <div style="display:flex; gap:0.5rem;">
+                                        <input type="text" id="settingState" class="form-control" placeholder="State" required>
+                                        <input type="text" id="settingPincode" class="form-control" placeholder="Pincode" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-grid-3">
+                                <div class="form-group">
+                                    <label class="form-label">Primary Phone</label>
+                                    <input type="text" id="settingPhone" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Emergency Helpline</label>
+                                    <input type="text" id="settingEmergency" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email Address</label>
+                                    <input type="email" id="settingEmail" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">General Clinic Timings</label>
+                                <input type="text" id="settingTimings" class="form-control" placeholder="12:00 PM - 05:00 PM & 07:00 PM - 12:00 AM (Mon - Sat)">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">About Clinic Description</label>
+                                <textarea id="settingAbout" class="form-control" rows="3"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Notice Banner Announcement (Optional)</label>
+                                <input type="text" id="settingNoticeBanner" class="form-control" placeholder="e.g. Free health screening camp this Saturday.">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg" style="width:100%;">
+                                💾 Save Site Configuration
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 8. PATIENT INQUIRIES VIEW -->
+                <div class="admin-view" id="view-inquiries" style="display:none;">
+                    <div class="table-container">
+                        <div class="table-header-bar">
+                            <h3>Contact Form Inquiries</h3>
+                        </div>
+
+                        <div style="overflow-x:auto;">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Contact Details</th>
+                                        <th>Subject</th>
+                                        <th>Message</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inquiriesTableBody">
+                                    <!-- Dynamic inquiries rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9. NOTIFICATIONS CENTER VIEW -->
+                <div class="admin-view" id="view-notifications" style="display:none;">
+                    <div class="card" style="max-width:800px; margin:0 auto 2rem;">
+                        <h3 style="margin-bottom:1rem;">Broadcast Announcement</h3>
+                        <form onsubmit="event.preventDefault(); const t=document.getElementById('annTitle').value; const m=document.getElementById('annMsg').value; API.admin.broadcastAnnouncement(t,m,'HIGH').then(()=>{showToast('Announcement posted','success'); this.reset(); AdminApp.init();});">
+                            <div class="form-group">
+                                <label class="form-label">Announcement Title</label>
+                                <input type="text" id="annTitle" class="form-control" required placeholder="e.g. Clinic Closed for Holiday / New Shift Added">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Message Details</label>
+                                <textarea id="annMsg" class="form-control" rows="2" required placeholder="Type announcement details..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm">📢 Broadcast to Clinic Notifications</button>
+                        </form>
+                    </div>
+
+                    <div class="card" style="max-width:800px; margin:0 auto;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                            <h3 style="margin:0;">Recent Notifications</h3>
+                            <button class="btn btn-outline btn-sm" onclick="API.admin.markAllNotificationsRead().then(() => AdminApp.init())">Mark All Read</button>
+                        </div>
+                        <div id="adminNotifsListView"></div>
+                    </div>
+                </div>
+
+                <!-- 10. ACCOUNT SECURITY & PASSWORD VIEW -->
+                <div class="admin-view" id="view-settings" style="display:none;">
+                    <div class="card" style="max-width:500px; margin:0 auto;">
+                        <h3 style="margin-bottom:1.5rem; border-bottom:1px solid #e2e8f0; padding-bottom:0.75rem;">Change Password</h3>
+                        <form id="changePasswordForm">
+                            <div class="form-group">
+                                <label class="form-label">Current Password</label>
+                                <input type="password" id="settingCurrentPassword" class="form-control" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">New Password</label>
+                                <input type="password" id="settingNewPassword" class="form-control" minlength="6" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Confirm New Password</label>
+                                <input type="password" id="settingConfirmPassword" class="form-control" minlength="6" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg" style="width:100%;">
+                                Update Password
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Notifications Drawer -->
+    <aside class="notification-drawer" id="notificationDrawer">
+        <div class="drawer-header">
+            <h4 style="margin:0;">In-App Notifications</h4>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+                <button id="markAllNotifsReadBtn" class="btn btn-outline btn-sm" style="font-size:0.75rem; padding:0.2rem 0.5rem;">Mark All Read</button>
+                <button id="closeNotifDrawerBtn" style="background:none; border:none; font-size:1.25rem; cursor:pointer;">&times;</button>
+            </div>
+        </div>
+        <div class="drawer-body" id="drawerNotifList">
+            <!-- Dynamic Notifications -->
+        </div>
+    </aside>
+
+    <!-- Home Visit Action Modal -->
+    <div class="modal-overlay" id="homeVisitModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="AdminApp.closeHomeVisitModal()">&times;</button>
+            <h3 style="margin-bottom:1.25rem;">Manage Home Visit Request</h3>
+            
+            <div style="background:#f8fafc; padding:1.25rem; border-radius:8px; margin-bottom:1.5rem; font-size:0.9rem;">
+                <div style="margin-bottom:0.4rem;"><strong>Patient:</strong> <span id="modalHvPatient"></span></div>
+                <div style="margin-bottom:0.4rem;"><strong>Schedule:</strong> <span id="modalHvSchedule"></span></div>
+                <div><strong>Address:</strong> <span id="modalHvAddress"></span></div>
+            </div>
+
+            <form id="homeVisitActionForm">
+                <div class="form-group">
+                    <label class="form-label">Update Status</label>
+                    <select id="modalHvStatus" class="form-select" required>
+                        <option value="PENDING">PENDING</option>
+                        <option value="ACCEPTED">ACCEPTED (Approve)</option>
+                        <option value="COMPLETED">COMPLETED</option>
+                        <option value="REJECTED">REJECTED</option>
+                        <option value="CANCELLED">CANCELLED</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Clinic Note / Patient Message</label>
+                    <input type="text" id="modalHvRemark" class="form-control" placeholder="e.g. Doctor will arrive at 10:30 AM.">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Doctor Clinical Notes (Internal)</label>
+                    <textarea id="modalHvDoctorNotes" class="form-control" rows="2" placeholder="Internal medical notes..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg" style="width:100%;">Update Home Visit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/admin.js"></script>
+</body>
+</html>
